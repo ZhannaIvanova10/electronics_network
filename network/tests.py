@@ -347,3 +347,105 @@ class PermissionsTest(APITestCase):
         self.client.force_authenticate(user=self.normal_user)
         response = self.client.get('/api/nodes/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class PaginationTest(APITestCase):
+    """Тесты для пагинации"""
+    
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='pagination_user',
+            password='test123',
+            is_staff=True,
+            is_active=True
+        )
+        self.client.force_authenticate(user=self.user)
+        
+        # Создаем 15 тестовых узлов
+        for i in range(15):
+            contact = Contact.objects.create(
+                email=f"test{i}@test.com",
+                country="Россия",
+                city=f"Город{i}",
+                street="Тестовая",
+                house_number=str(i)
+            )
+            NetworkNode.objects.create(
+                name=f"Тестовый узел {i}",
+                contact=contact,
+                debt=Decimal(f"{i}00.00")
+            )
+    
+    def test_default_pagination(self):
+        """Тест пагинации по умолчанию (page_size=10)"""
+        response = self.client.get('/api/nodes/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('count', response.data)
+        self.assertIn('next', response.data)
+        self.assertIn('previous', response.data)
+        self.assertIn('results', response.data)
+        self.assertEqual(len(response.data['results']), 10)
+    def test_custom_page_size(self):
+        """Тест кастомного размера страницы"""
+        response = self.client.get('/api/nodes/?page_size=5')
+        self.assertEqual(len(response.data['results']), 5)
+    
+    def test_second_page(self):
+        """Тест второй страницы"""
+        response = self.client.get('/api/nodes/?page=2&page_size=5')
+        self.assertEqual(len(response.data['results']), 5)
+        self.assertEqual(response.data['previous'], 'http://testserver/api/nodes/?page=1&page_size=5')
+
+
+class SortingTest(APITestCase):
+    """Тесты для сортировки"""
+    
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='sort_user',
+            password='test123',
+            is_staff=True,
+            is_active=True
+        )
+        self.client.force_authenticate(user=self.user)
+    
+    def test_sort_by_name(self):
+        """Тест сортировки по имени"""
+        response = self.client.get('/api/nodes/?ordering=name')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    def test_sort_by_debt_desc(self):
+        """Тест сортировки по долгу (убывание)"""
+        response = self.client.get('/api/nodes/?ordering=-debt')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_sort_by_created_at(self):
+        """Тест сортировки по дате создания"""
+        response = self.client.get('/api/nodes/?ordering=created_at')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class AdvancedFilterTest(APITestCase):
+    """Тесты для расширенной фильтрации"""
+    
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='filter_user',
+            password='test123',
+            is_staff=True,
+            is_active=True
+        )
+        self.client.force_authenticate(user=self.user)
+    
+    def test_filter_min_debt(self):
+        """Тест фильтрации по минимальному долгу"""
+        response = self.client.get('/api/nodes/?min_debt=100000')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    def test_filter_max_debt(self):
+        """Тест фильтрации по максимальному долгу"""
+        response = self.client.get('/api/nodes/?max_debt=50000')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    def test_filter_city_contains(self):
+        """Тест фильтрации по части названия города"""
+        response = self.client.get('/api/nodes/?city_contains=Моск')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
