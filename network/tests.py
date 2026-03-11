@@ -4,7 +4,6 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from .models import NetworkNode, Contact, Product
 from decimal import Decimal
-import json
 
 User = get_user_model()
 
@@ -54,7 +53,6 @@ class ProductModelTest(TestCase):
             model="X100",
             release_date="2024-01-15"
         )
-
     def test_product_creation(self):
         """Тест создания продукта"""
         self.assertEqual(self.product.name, "Смартфон")
@@ -94,7 +92,6 @@ class NetworkNodeModelTest(TestCase):
             street="Невский",
             house_number="25"
         )
-
         # Создаем продукты
         self.product1 = Product.objects.create(
             name="Смартфон",
@@ -113,7 +110,7 @@ class NetworkNodeModelTest(TestCase):
             contact=self.contact1,
             debt=Decimal('0.00')
         )
-        self.factory.products.set([self.product1, self.product2])
+        self.factory.products.set([self.product1.id, self.product2.id])
 
         self.retail = NetworkNode.objects.create(
             name="Тестовый магазин",
@@ -121,7 +118,7 @@ class NetworkNodeModelTest(TestCase):
             supplier=self.factory,
             debt=Decimal('150000.50')
         )
-        self.retail.products.set([self.product1])
+        self.retail.products.set([self.product1.id])
 
     def test_factory_creation(self):
         """Тест создания завода (уровень 0)"""
@@ -227,7 +224,6 @@ class NetworkNodeAPITest(APITestCase):
         response = self.client.post('/api/nodes/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(NetworkNode.objects.count(), 2)
-
     def test_api_debt_read_only(self):
         """Тест запрета обновления долга через API"""
         self.client.force_authenticate(user=self.user)
@@ -270,7 +266,7 @@ class NetworkNodeAdminTest(TestCase):
             contact=self.contact,
             debt=Decimal('1000.00')
         )
-        self.node.products.set([self.product])
+        self.node.products.set([self.product.id])
         self.client.force_login(self.user)
 
     def test_admin_login(self):
@@ -306,7 +302,6 @@ class NetworkNodeAdminTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Тестовый узел')
         self.assertContains(response, 'Задолженность')
-
 
 class PermissionsTest(APITestCase):
     """Тесты для прав доступа"""
