@@ -1,0 +1,6 @@
+МОДЕЛИ:
+Contact поля: ['id', 'email', 'country', 'city', 'street', 'house_number']
+Product поля: ['id', 'name', 'model', 'release_date']
+NetworkNode поля: ['id', 'name', 'level', 'contact', 'supplier', 'debt', 'created_at']
+
+Уровни: ['Завод', 'Розничная сеть', 'Индивидуальный предприниматель']

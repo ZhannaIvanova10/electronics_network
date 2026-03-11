@@ -1,0 +1,18 @@
+СТРУКТУРА ПРОЕКТА:
+total 227
+drwxr-xr-x 1 Zhanna 197121      0 Mar 11 19:36 ./
+drwxr-xr-x 1 Zhanna 197121      0 Mar 11 19:30 ../
+drwxr-xr-x 1 Zhanna 197121      0 Mar 11 19:38 .git/
+-rw-r--r-- 1 Zhanna 197121    436 Mar 11 18:19 .gitignore
+drwxr-xr-x 1 Zhanna 197121      0 Mar 11 19:25 .idea/
+drwxr-xr-x 1 Zhanna 197121      0 Mar 11 17:54 config/
+-rw-r--r-- 1 Zhanna 197121   8090 Mar 11 18:15 database_backup.json
+-rw-r--r-- 1 Zhanna 197121 172032 Mar 11 19:13 db.sqlite3
+-rwxr-xr-x 1 Zhanna 197121    684 Mar 11 17:54 manage.py*
+drwxr-xr-x 1 Zhanna 197121      0 Mar 11 17:54 media/
+drwxr-xr-x 1 Zhanna 197121      0 Mar 11 18:10 network/
+-rw-r--r-- 1 Zhanna 197121   3558 Mar 11 19:06 README.md
+-rw-r--r-- 1 Zhanna 197121    175 Mar 11 18:17 requirements.txt
+drwxr-xr-x 1 Zhanna 197121      0 Mar 11 19:39 screencast/
+drwxr-xr-x 1 Zhanna 197121      0 Mar 11 17:54 static/
+drwxr-xr-x 1 Zhanna 197121      0 Mar 11 17:52 venv/

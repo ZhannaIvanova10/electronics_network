@@ -1,0 +1,44 @@
+=========================================
+КОМАНДЫ ДЛЯ ДЕМОНСТРАЦИИ ПРОЕКТА
+=========================================
+
+# 1. Показать структуру проекта
+ls -la
+
+# 2. Показать версии
+python --version
+pip list | grep -E "Django|djangorestframework|psycopg2"
+
+# 3. Показать модели
+python manage.py shell -c "
+from network.models import NetworkNode, Contact, Product
+print('Contact:', [f.name for f in Contact._meta.fields])
+print('Product:', [f.name for f in Product._meta.fields])
+print('NetworkNode:', [f.name for f in NetworkNode._meta.fields])
+print('\\nУровни:', [level[1] for level in NetworkNode.NodeLevel.choices])
+"
+
+# 4. Показать данные
+python manage.py shell -c "
+from network.models import NetworkNode
+for node in NetworkNode.objects.all():
+    print(f'{node.name} (уровень {node.level}) - Долг: {node.debt} руб.')
+    if node.supplier:
+        print(f'  Поставщик: {node.supplier.name}')
+"
+
+# 5. Показать админку (запустить сервер)
+python manage.py runserver
+# Открыть браузер: http://127.0.0.1:8000/admin/
+
+# 6. Протестировать API (в другом окне)
+curl -u admin:yourpassword http://127.0.0.1:8000/api/nodes/ | python -m json.tool
+curl -u admin:yourpassword "http://127.0.0.1:8000/api/nodes/?country=Россия"
+
+# 7. Показать Git
+git status
+git log --oneline -3
+git remote -v
+
+# 8. Показать README
+cat README.md | head -20
