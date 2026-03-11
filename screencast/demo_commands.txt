@@ -1,44 +1,41 @@
 =========================================
-КОМАНДЫ ДЛЯ ДЕМОНСТРАЦИИ ПРОЕКТА
+ОБНОВЛЕННЫЕ КОМАНДЫ ДЛЯ ДЕМОНСТРАЦИИ ПРОЕКТА
 =========================================
 
-# 1. Показать структуру проекта
-ls -la
+# 1. DOCKER
+# Запуск PostgreSQL в Docker
+docker-compose up -d db
+docker ps | grep electronics_db
 
-# 2. Показать версии
-python --version
-pip list | grep -E "Django|djangorestframework|psycopg2"
+# 2. МИГРАЦИИ И ДАННЫЕ
+python manage.py migrate
+python manage.py loaddata network/fixtures/initial_data.json
 
-# 3. Показать модели
-python manage.py shell -c "
-from network.models import NetworkNode, Contact, Product
-print('Contact:', [f.name for f in Contact._meta.fields])
-print('Product:', [f.name for f in Product._meta.fields])
-print('NetworkNode:', [f.name for f in NetworkNode._meta.fields])
-print('\\nУровни:', [level[1] for level in NetworkNode.NodeLevel.choices])
-"
-
-# 4. Показать данные
-python manage.py shell -c "
-from network.models import NetworkNode
-for node in NetworkNode.objects.all():
-    print(f'{node.name} (уровень {node.level}) - Долг: {node.debt} руб.')
-    if node.supplier:
-        print(f'  Поставщик: {node.supplier.name}')
-"
-
-# 5. Показать админку (запустить сервер)
+# 3. ЗАПУСК СЕРВЕРА
 python manage.py runserver
-# Открыть браузер: http://127.0.0.1:8000/admin/
 
-# 6. Протестировать API (в другом окне)
-curl -u admin:yourpassword http://127.0.0.1:8000/api/nodes/ | python -m json.tool
-curl -u admin:yourpassword "http://127.0.0.1:8000/api/nodes/?country=Россия"
+# 4. ТЕСТИРОВАНИЕ API (в другом окне)
+# Базовые запросы
+curl -u admin:password http://127.0.0.1:8000/api/nodes/ | python -m json.tool
+curl -u admin:password "http://127.0.0.1:8000/api/nodes/?country=Россия"
 
-# 7. Показать Git
+# Пагинация
+curl -u admin:password "http://127.0.0.1:8000/api/nodes/?page_size=2"
+
+# Сортировка
+curl -u admin:password "http://127.0.0.1:8000/api/nodes/?ordering=-debt"
+
+# Расширенная фильтрация
+curl -u admin:password "http://127.0.0.1:8000/api/nodes/?min_debt=100000"
+
+# 5. ЗАПУСК ТЕСТОВ
+python manage.py test network -v 2
+
+# 6. GIT
 git status
 git log --oneline -3
 git remote -v
 
-# 8. Показать README
+# 7. ДОКУМЕНТАЦИЯ
 cat README.md | head -20
+cat EXPLANATION.md | head -20

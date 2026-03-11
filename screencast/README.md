@@ -1,7 +1,7 @@
 # 🎬 СКРИНКАСТ ПРОЕКТА "Платформа торговой сети электроники"
 
 ## 📋 ИНФОРМАЦИЯ О ПРОЕКТЕ
-- **Дата выполнения:** 11 марта 2026
+- **Дата выполнения:** 12 марта 2026
 - **Автор:** ZhannaIvanova10
 - **Репозиторий:** https://github.com/ZhannaIvanova10/electronics_network
 
@@ -9,27 +9,26 @@
 
 | Файл | Описание |
 |------|----------|
-| `01_structure.txt` | Структура проекта (вывод `ls -la`) |
+| `01_structure.txt` | Структура проекта (актуальная) |
 | `02_models.txt` | Модели данных и их поля |
 | `03_data.txt` | Данные в базе (3 звена сети) |
-| `demo_commands.txt` | Полный список команд для демонстрации |
-| `README.txt` | Краткое описание скринкаста |
+| `demo_commands.txt` | Обновлённые команды с Docker |
+| `SCREENCAST_DETAILED.md` | Детальное описание с Docker |
+| `screencast_final.log` | Финальный лог демонстрации |
 
-## 📊 СТАТУС ВЫПОЛНЕНИЯ: 20/20
+## 📊 СТАТУС ВЫПОЛНЕНИЯ: 20/20 + УЛУЧШЕНИЯ
 
 ### Технические требования:
 - ✅ Python 3.13.3
 - ✅ Django 4.2.7
 - ✅ DRF 3.14.0
-- ✅ PostgreSQL 10+ (настроен в коде)
+- ✅ PostgreSQL 10+ (через Docker)
 
 ### Модели данных:
 - ✅ Иерархия: Завод (0), Розница (1), ИП (2)
-- ✅ Контакты: 5 полей (email, страна, город, улица, дом)
-- ✅ Продукты: 3 поля (название, модель, дата)
-- ✅ Поставщик (ForeignKey)
-- ✅ Задолженность (DecimalField)
-- ✅ Время создания (auto_now_add)
+- ✅ Контакты: 5 полей
+- ✅ Продукты: 3 поля
+- ✅ Поставщик, задолженность, время создания
 
 ### Админ-панель:
 - ✅ Вывод всех объектов
@@ -41,20 +40,25 @@
 - ✅ CRUD операции
 - ✅ Запрет обновления долга
 - ✅ Фильтрация по стране
-- ✅ Права доступа (только активные сотрудники)
+- ✅ Права доступа
+- ✅ Пагинация, сортировка
 
 ### Дополнительно:
-- ✅ GitHub репозиторий
-- ✅ Полная документация
+- ✅ 32 теста
+- ✅ Docker-контейнеризация
+- ✅ API документация (drf-spectacular)
+- ✅ EXPLANATION.md с пояснениями
 
-## 🚀 БЫСТРЫЙ ЗАПУСК
+## 🚀 БЫСТРЫЙ ЗАПУСК С DOCKER
 ```bash
-git clone https://github.com/ZhannaIvanova10/electronics_network.git
-cd electronics_network
-python -m venv venv
-source venv/Scripts/activate  # Windows
-pip install -r requirements.txt
+# Запуск PostgreSQL
+docker-compose up -d db
+
+# Миграции
 python manage.py migrate
+
+# Загрузка данных
 python manage.py loaddata network/fixtures/initial_data.json
-python manage.py createsuperuser
+
+# Запуск сервера
 python manage.py runserver
