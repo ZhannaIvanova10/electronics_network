@@ -22,7 +22,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
-    'drf_spectacular',
     'network',
 ]
 
@@ -35,6 +34,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
@@ -55,7 +55,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# ✅ PostgreSQL через Docker (АКТИВНО!)
+# ✅ АКТИВНО: SQLite для демонстрации
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+# 🔄 PostgreSQL конфигурация (закомментирована, но готова к использованию)
+# Для активации PostgreSQL:
+# 1. Запустите сервер PostgreSQL
+# 2. Раскомментируйте блок ниже
+# 3. Закомментируйте блок SQLite выше
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -63,9 +76,10 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'localhost',
-        'PORT': '5433',  # Порт из docker-compose.yml
+        'PORT': '5432',
     }
 }
+"""
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -81,6 +95,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'UTC'
 USE_I18N = True
@@ -99,15 +114,27 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+}
+
+# Pagination settings
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
-    'PAGE_SIZE_QUERY_PARAM': 'page_size',
-    'MAX_PAGE_SIZE': 100,
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+# DRF Spectacular settings
+INSTALLED_APPS += ['drf_spectacular']
+
+REST_FRAMEWORK['DEFAULT_SCHEMA_CLASS'] = 'drf_spectacular.openapi.AutoSchema'
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Electronics Network API',
